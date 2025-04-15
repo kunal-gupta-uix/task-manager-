@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
 
 // Signup Controller
 const signup = async (req, res) => {
@@ -18,7 +19,7 @@ const signup = async (req, res) => {
     
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    
     // Create new user
     const newUser = await User.create({
       email,
@@ -63,10 +64,17 @@ const login = async(req,res)=>{
         {
             return res.status(401).json({error: 'Invalid password'});
         }
-
+        
+        const token = jwt.sign(             // for authentication purposes of protected routes
+            { id: user.user_id }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }                    
+          );
+          
         //4. Respond with user's data if the password matches
         res.status(200).json({
             message: 'Login successful',
+            token,
             user: {
                 id : user.user_id,
                 email: user.email,
