@@ -1,6 +1,8 @@
 const {DataTypes} = require('sequelize');
 const {sequelize} = require('../config/db');
 const {project_status} = require('../utils/constants');
+const {ProjectMember} = require('./ProjectMember');
+
 
 const Project = sequelize.define('Project', {
     project_id:{
@@ -33,4 +35,5 @@ const Project = sequelize.define('Project', {
 
 );
 
-module.exports = Project;
+
+module.exports = {Project};
