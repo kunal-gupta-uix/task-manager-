@@ -3,91 +3,76 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // login service
-const login = async (req, res) => {
+const login = async ({email_id, password}) => {
     try{
-    const email_id = req.body.email;
-    const actual_password = req.body.password;
-    
-    // check for bad request
-    if(!email_id || !actual_password)
-    {
-        return res.status(400).json({message:'All fields are mandatory'});
-    }
-
-
-    //check if the email is present in database or not
-    const existingUser = await User.findOne({
-        where:{
-            email : email_id
+        // check for bad request
+        if(!email_id || !password)
+        {
+            throw new Error('All necessary fields must be filled');
         }
-    });
+        //check if the email is present in database or not
+        const existing = await User.findOne({
+            where:{
+                email : email_id
+            }
+        });
     
-    if(!existingUser)
-    {
-        return res.status(404).json({message: 'No details found'});
-    }
-
-    const hashed_password = existingUser.password;
-    const valid_details = await bcrypt.compare(actual_password, hashed_password);
+        if(!existing)
+        {
+            throw new Error('Not an existing user, you must signup first');
+        }
     
-    if(!valid_details)
-    {
-        return res.status(401).json({message: 'Invalid password'});
-    }
+        const hashed_password = existing.password;
+        const valid_details = await bcrypt.compare(password, hashed_password);
     
-    const token  = jwt.sign({id: existingUser.user_id},process.env.JWT_SECRET ,{expiresIn: '1h'} );
-    
-    return res.status(200).json({message: 'Logged in successfully', token});
+        if(!valid_details)
+        {
+            throw new Error('Invalid password');
+        }
+        const token  = jwt.sign({id: existing.user_id},process.env.JWT_SECRET ,{expiresIn: '1h'} );  
+        return {token, user : existing};
     }
     catch(err)
-   {
-    return res.status(500).json({message:'Error while login', error : err.message});
-   }
+    {      
+        throw err;  
+    }
 
 };
 
 
 //signup service
-const signup = async (req, res) => {
+const signup = async ({username, email, password}) => {
     try{
-        const new_username = req.body.username;
-        const email_id = req.body.email;
-        const password = req.body.password;
-
         //check for bad request
-        if(!new_username || !email_id || !password)
+        if(!username || !email || !password)
         {
-            return res.status(400).json({message: 'All fields are necessary'});
+            throw new Error('All necessary fields must be filled');
         }
-        
-        console.log('user is', User);
         // check if user is already registered
         const already = await User.findOne({
             where:{
-                email : email_id
+                email : email
             }
         });
 
         if(already)
         {
-            return res.status(409).json({message: 'User already registered, please login'});
+            throw new Error('Already registered user, please login to continue');
         }
 
         // hash the password for further storage
         const hashed_password = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
-            email: email_id,
+            email: email,
             password: hashed_password,
-            username: new_username
+            username: username
         });
-
-        return res.status(201).json({message: 'Signup Successful'});
-
+        return newUser;
     }
     catch(err)
     {
-        return res.status(500).json({message: 'Error while signup', error: err.message});
+        throw err;
     }
 };
 

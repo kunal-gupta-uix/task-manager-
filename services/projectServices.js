@@ -1,152 +1,101 @@
 const {Project} = require('../models/Project');
 const {User} = require('../models/User');
 const {ProjectMember} = require('../models/ProjectMember');
-const {project_status} = require('../utils/constants');
+const {project_member_roles, project_status} = require('../utils/constants');
 
 
 // add new member to project
-const addMemberToProject = async (req, res) => {
+const addMemberToProject = async ({project_id, member_id, role}) => {
     try{
-    const sender_id = req.user.id;
-    const new_member_id = req.body.project_member_id;
-    const member_role = req.body.project_member_role;
-    const project_id = req.body.project_id;
-
+     
     //check if all necessary attributes have been passed or not
-    if(!new_member_id || !member_role || !project_id)
+    if(!member_id || !role || !project_id)
     {
-        return res.status(400).json({message: 'All necessary fields must be filled'});
+        throw new Error('All necessary fields must be filled');
     }
     
-    if(member_role != 'member' && member_role != 'owner')
+    if(!Object.values(project_member_roles).includes(role))
     {
-        return res.status(400).json({message: 'invalid role specified'});
+        throw new Error('Invalid role');
     }
     
-    const valid_member = await User.findByPk(new_member_id);
-    if(!valid_member)
+    const user = await User.findByPk(member_id);
+    if(!user)
     {
-        return res.status(404).json({message: 'Not a member of the database'});
+        throw new Error('User not found');
     }
     
-    const already_added = await ProjectMember.findOne({
+    const existing = await ProjectMember.findOne({
         where:{
             project_id,
-            project_member_id : new_member_id
+            project_member_id : member_id
         }
-    }
-    );
+    });
   
-    if(already_added)
+    if(existing)
     {
-        return res.status(409).json({message: 'This is an already added member'});
-    }
-
-
-    if(member_role == 'owner')
-    {
-        if(sender_id != new_member_id)
-        {
-           return res.status(403).json({message: 'Unauthorized user'});
-        }
+        throw new Error('User already in project');
     }
 
     // If request is a valid one, let's add the project member 
-    try{
-    const newProjectMember = await ProjectMember.create({
+    return await ProjectMember.create({
         project_id,
-        project_member_id: new_member_id,
-        member_role : member_role
+        project_member_id: member_id,
+        project_member_role: role
     });
-
-    return res.status(201).json({message: 'new Member added successfully'});
-    }
-    catch(err)
-    {
-        return res.status(500).json({message: 'Error while adding new member', error: err.message});
-    }
 }
 catch(error)
 {
-    return res.status(500).json({message: 'Error while adding project member', error: error.message});
+    throw error;
 }  
 };
 
 
-const addNewProject = async (req, res) => {
+const addNewProject = async ({project_title, project_description, project_status, project_deadline, sender_id}) => {
   try
   {
-    const sender_id = req.user.id;
-    const project_title = req.body.project_title;
-    const project_description = req.body.project_description;
-    const project_status = req.body.project_status;
-    const project_deadline = req.body.project_deadline;
-
     //check if all fields are present or not
-    if(!project_title || !project_description || !project_status || !project_deadline)
+    if(!project_title || !project_description || !project_status || !project_deadline|| !sender_id)
     {
-        return res.status(400).json({message:'All necessary fields must be filled'});
+        throw new Error('All necessary fields must be filled');
     }
-
-    // check if the sender is a genuine person 
-    const validSender = await User.findByPk(sender_id);
-    if(!validSender)
-    {
-        return res.status(404).json({message: 'Unauthorised request'});
-    }
-
-    
-    // Create new project in the projects table
+    // create new project in the projects table
     const newProject = await Project.create({
         project_title,
         project_description,
         project_status,
         project_deadline
-    }
-    );
-
-    // add new Project member in the projectMembers table as an owner
-    req.body.project_id = newProject.project_id;
-    req.body.member_role = 'owner';
-    req.body.project_member_id = sender_id;
-    
-    try{
-       await addMemberToProject(req, res);
-       return res.status(201).json({message: 'Project created successfully'});
-    }
-    catch(er)
-    {
-        await newProject.destroy();
-        return res.status(500).json({message:'Project created successfully but error while adding owner', error: er.message});
-    }
+    });
+    const project_id = newProject.project_id;
+    const role = 'owner';
+    const newProjectOwner = await addMemberToProject({project_id, member_id : sender_id, role});
+    return newProject;
   }
-
   catch(err)
     {
-        return res.status(500).json({message:'Error while creating project', error: err.message});
+        throw err;
     }
 }
 
 
-
 // get all projects of a user
-const getUserProjects = async (req, res) => {
+const getUserProjects = async ({user_id}) => {
     try{
-        const sender_id = req.user.id;
-        if(!sender_id)
+        if(!user_id)
         {
-            return res.status(401).json({message: 'Unauthorised user'});
+            throw new Error('All necessary fields must be filled');
         }
         //check if the sender is a valid one 
-        const valid_sender = await User.findByPk(sender_id);
-        if(!valid_sender)
+        const existing = await User.findByPk(user_id);
+        if(!existing)
         {
-            return res.status(401).json({message: 'Unauthorised user'});
+            throw new Error('User not found');
         }
-
-        const projects = await ProjectMember.findAll({
+        
+        // Proceed with the request if sender is a valid one
+        return await ProjectMember.findAll({
             where:{
-                project_member_id : sender_id
+                project_member_id : user_id
             },
             include: [
                 {
@@ -155,27 +104,24 @@ const getUserProjects = async (req, res) => {
             ]
         });
 
-        return res.status(200).json({message: 'Projects fetched successfully', projects});
     }
     catch(err)
     {
-        return res.status(500).json({message: 'Error while fetching projects', error: err.message});
+        throw err;
     }
 };
 
 
-const updateProjectStatus = async (req, res) => {
+const updateProjectStatus = async ({project_id, sender_id, new_status}) => {
     try{
-        const sender_id = req.user.id;
-        const new_status = req.body.project_status;
-        const project_id = req.body.project_id;
         if(!new_status || !project_id || !sender_id)
         {
-            return res.status(400).json({message: 'All fields are necessary'});
+            throw new Error('All necessary fields must be filled');
         }
-        if(!project_status.includes(new_status))
+        
+        if(!Object.values(project_status).includes(new_status))
         {
-            return res.status(400).json({message: 'invalid project status value'});
+            throw new Error('Invalid status');
         }
 
         const sender = await ProjectMember.findOne({
@@ -185,27 +131,20 @@ const updateProjectStatus = async (req, res) => {
             }
         });
 
-        if(!sender)
+        if(!sender || sender.project_member_role != 'owner')
         {
-            return res.status(404).json({message: 'You are not a member of this project'});
-        }
-
-        const designation = sender.project_member_role;
-        if(designation != 'owner')
-        {
-            return res.status(403).json({message: 'Not authorised to change the project status'});
+            throw new Error('Not authorised to change project status');
         }
         
-        //update the project status if everything is working fine
+        //update the project status if everything is fine
         const req_project = await Project.findByPk(project_id);
         req_project.project_status = new_status;
         await req_project.save();
-        return res.status(200).json({message: 'Project status updated successfully'});
-
+        return req_project;
     }
     catch(err)
     {
-        return res.status(500).json({message: 'Error while updating project status', error: err.message});
+        throw err;
     }
 
 };

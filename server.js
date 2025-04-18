@@ -3,9 +3,7 @@ const {connectDB} = require('./config/db');
 const authRouter = require('./routes/authRoutes');
 const projectRouter = require('./routes/projectRoutes');
 const { sequelize } = require('./config/db');
-const { User } = require('./models/User');
-const { Project } = require('./models/Project');
-const { ProjectMember } = require('./models/ProjectMember');
+const {User, Project, ProjectMember} = require('./models');
 
 // Sync models with DB
 sequelize.sync({ alter: true })  // or use { force: true } during development to drop and recreate
