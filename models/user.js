@@ -54,8 +54,5 @@ const User = sequelize.define('User', {
   tableName: 'users'
 });
 
-module.exports = User;
+module.exports = {User};
 
-//sequelize.define makes a subclass of the class Model which contains static methods like finaAll, create etc. 
-// here this const User is actually referring to that subclass. We will only refer static methods using this subclass User.
-// To use any instance method of the subclass User, we will create an object of this subclass User.

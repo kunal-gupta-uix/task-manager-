@@ -14,7 +14,7 @@ process.env.DB_PASSWORD,
 
 const connectDB = async ()=> {
     try{
-        await sequelize.authenticate(); // sequelize checks if the connection works
+        await sequelize.authenticate(); // sequelize tries to connect to the database and checks if the connection works
         console.log("Mysql connected successfully");
     }
     catch(error)

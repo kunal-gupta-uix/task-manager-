@@ -24,4 +24,4 @@ const ProjectMember = sequelize.define('ProjectMember',{
 }
 );
 
-module.exports = ProjectMember;
+module.exports = {ProjectMember};
