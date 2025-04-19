@@ -8,4 +8,32 @@ const project_status = {
     COMPLETED: 'completed',
     ARCHIVED: 'archived'
 };
-module.exports = {project_member_roles, project_status};
+
+const task_priority = {
+    NO_PRIORITY : 'no_priority',
+    URGENT : 'urgent',
+    HIGH : 'high',
+    MEDIUM : 'medium',
+    LOW : 'low'
+}
+
+const task_status = {
+    BACKLOG : 'backlog',
+    TODO : 'todo',
+    INPROGRESS : 'inprogress',
+    INREVIEW : 'inreview',
+    DONE : 'done',
+    CANCELLED : 'cancelled',
+    DUPLICATE : 'duplicate'
+}
+
+const task_type = {
+    FEATURE: 'feature',
+    BUG: 'bug',
+    IMPROVEMENT: 'improvement',
+    DOCUMENTATION: 'documentation',
+    RESEARCH: 'research',
+    OTHER: 'other'
+};
+
+module.exports = {project_member_roles, project_status, task_priority, task_status, task_type};

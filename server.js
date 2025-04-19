@@ -2,8 +2,9 @@ const express = require('express');
 const {connectDB} = require('./config/db');
 const authRouter = require('./routes/authRoutes');
 const projectRouter = require('./routes/projectRoutes');
+const taskRouter = require('./routes/taskRoutes');
 const { sequelize } = require('./config/db');
-const {User, Project, ProjectMember} = require('./models');
+const {User, Project, ProjectMember,Task} = require('./models');
 
 // Sync models with DB
 sequelize.sync({ alter: true })  // or use { force: true } during development to drop and recreate
@@ -13,7 +14,6 @@ sequelize.sync({ alter: true })  // or use { force: true } during development to
   .catch(err => {
     console.error("Failed to sync models:", err);
   });
-
 
 require('dotenv').config(); // Load environment variables
 
@@ -29,6 +29,7 @@ connectDB();
 // routes 
 app.use('/auth', authRouter);
 app.use('/project',projectRouter);
+app.use('/task',taskRouter);
 
 //basic/default route
 app.get('/', (req, res)=>{
