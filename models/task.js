@@ -9,7 +9,7 @@
         type: DataTypes.UUID,
         defaultValue : DataTypes.UUIDV4,
         primaryKey : true
-    },
+    }, 
     task_type:{
         type: DataTypes.ENUM(task_type.BUG, task_type.DOCUMENTATION, task_type.FEATURE, task_type.IMPROVEMENT, task_type.RESEARCH, task_type.OTHER),
         allowNull : false
