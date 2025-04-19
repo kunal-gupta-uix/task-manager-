@@ -1,4 +1,4 @@
-const {addNewProject, updateProjectStatus, getUserProjects, addMemberToProject} = require('../services/projectServices');
+const {addNewProject, updateProject, getUserProjects, addMemberToProject} = require('../services/projectServices');
 
 const addNewProjectController = async (req, res) => {
     try{
@@ -31,17 +31,20 @@ const addMemberToProjectController = async (req, res) => {
     }
 };
 
-const updateProjectStatusController = async (req, res) => {
+const updateProjectController = async (req, res) => {
     try{
-        const project_id = req.body.project_id;
+        const project_id = req.project.project_id;
         const sender_id = req.user.user_id;
         const new_status = req.body.project_status;
-        const updatedProject = await updateProjectStatus({project_id, sender_id, new_status});
-        res.status(200).json({message: 'Successfully updated project status', updatedProject});
+        const new_title = req.body.project_title;
+        const new_description = req.body.project_description;
+        const new_deadline = req.body.project_deadline;
+        const updatedProject = await updateProject({project_id, sender_id, new_status,new_title, new_description, new_deadline});
+        res.status(200).json({message: 'Successfully updated project details', updatedProject});
     }
     catch(err)
     {
-        res.status(500).json({message: 'Error while updating project status', error: err.message});
+        res.status(500).json({message: 'Error while updating project details', error: err.message});
     }
 };
 
@@ -57,4 +60,4 @@ const getUserProjectsController = async (req, res) => {
     }
 };
 
-module.exports = {addNewProjectController, addMemberToProjectController, updateProjectStatusController, getUserProjectsController};
+module.exports = {addNewProjectController, addMemberToProjectController, updateProjectController, getUserProjectsController};

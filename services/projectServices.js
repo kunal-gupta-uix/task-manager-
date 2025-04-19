@@ -112,9 +112,9 @@ const getUserProjects = async ({user_id}) => {
 };
 
 
-const updateProjectStatus = async ({project_id, sender_id, new_status}) => {
+const updateProject = async ({project_id, sender_id, new_status, new_title, new_description, new_deadline}) => {
     try{
-        if(!new_status || !project_id || !sender_id)
+        if(!new_status || !project_id || !sender_id || !new_title ||!new_description || !new_deadline)
         {
             throw new Error('All necessary fields must be filled');
         }
@@ -133,12 +133,15 @@ const updateProjectStatus = async ({project_id, sender_id, new_status}) => {
 
         if(!sender || sender.project_member_role != 'owner')
         {
-            throw new Error('Not authorised to change project status');
+            throw new Error('Not authorised to update project details');
         }
         
         //update the project status if everything is fine
         const req_project = await Project.findByPk(project_id);
         req_project.project_status = new_status;
+        req_project.project_title = new_title;
+        req_project.project_description = new_description;
+        req_project.project_deadline = new_deadline;
         await req_project.save();
         return req_project;
     }
@@ -149,4 +152,4 @@ const updateProjectStatus = async ({project_id, sender_id, new_status}) => {
 
 };
 
-module.exports = {addNewProject, updateProjectStatus, getUserProjects, addMemberToProject};
+module.exports = {addNewProject, updateProject, getUserProjects, addMemberToProject};
