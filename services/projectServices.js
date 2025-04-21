@@ -14,7 +14,7 @@ const addMemberToProject = async ({project_id, member_id, role}) => {
         throw new Error('All necessary fields must be filled');
     }
     
-    if(!Object.values(project_member_roles).includes(role))
+    if(role != 'member')
     {
         throw new Error('Invalid role');
     }
