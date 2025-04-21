@@ -44,7 +44,7 @@
         allowNull: false,
         references:{
             model : Project,
-            key: project_id
+            key: 'project_id'
         }
     },
     task_deadline:{
