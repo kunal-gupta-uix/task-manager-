@@ -47,6 +47,10 @@ const User = sequelize.define('User', {
   allow_notifications: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  isVerified :{
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   timestamps: true,
