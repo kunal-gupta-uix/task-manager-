@@ -2,6 +2,7 @@ const express = require('express');
 const {connectDB} = require('./config/db');
 const authRouter = require('./routes/authRoutes');
 const projectRouter = require('./routes/projectRoutes');
+const taskRouter = require('./routes/taskRoutes');
 const { sequelize } = require('./config/db');
 const {User, Project, ProjectMember,Task} = require('./models');
 
@@ -22,6 +23,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); // Middleware to parse json in requests
 app.use('/project',projectRouter);
+app.use('/task',taskRouter);
+
 
 //connect to mysql database  
 connectDB();
