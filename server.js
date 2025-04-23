@@ -21,7 +21,6 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(express.json()); // Middleware to parse json in requests
-app.use('/project',projectRouter);
 
 //connect to mysql database  
 connectDB();
@@ -32,6 +31,7 @@ app.get('/', (req, res)=>{
 });
 
 app.use('/auth', authRouter);
+app.use('/project',projectRouter);
 
 // start the server
 app.listen(PORT, ()=>{
