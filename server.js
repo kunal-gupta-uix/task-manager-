@@ -1,6 +1,5 @@
 const express = require('express');
 const {connectDB} = require('./config/db');
-const authRouter = require('./routes/authRoutes');
 const { sequelize } = require('./config/db');
 const {User, Project, ProjectMember,Task} = require('./models');
 
@@ -28,8 +27,6 @@ connectDB();
 app.get('/', (req, res)=>{
     res.send('Welcome to the task manager API');
 });
-
-app.use('/auth', authRouter);
 
 // start the server
 app.listen(PORT, ()=>{
