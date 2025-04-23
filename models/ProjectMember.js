@@ -1,8 +1,8 @@
-const {DataTypes} = require('sequelize');
-const {sequelize} = require('../config/db');
-const{project_member_roles} = require('../utils/constants'); 
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
+import * as enums from '../utils/constants.js'; 
 
-const ProjectMember = sequelize.define('ProjectMember',{
+export const ProjectMember = sequelize.define('ProjectMember',{
     project_id: {
         type: DataTypes.UUID,
         allowNull: false
@@ -12,7 +12,7 @@ const ProjectMember = sequelize.define('ProjectMember',{
         allowNull: false
     },
     project_member_role:{
-        type: DataTypes.ENUM(project_member_roles.MEMBER, project_member_roles.OWNER),
+        type: DataTypes.ENUM(enums.project_member_roles.MEMBER, enums.project_member_roles.OWNER),
         allowNull: false
     }
 
@@ -23,5 +23,3 @@ const ProjectMember = sequelize.define('ProjectMember',{
     tableName: 'projectMembers'
 }
 );
-
-module.exports = {ProjectMember};

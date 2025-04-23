@@ -1,17 +1,17 @@
-const {DataTypes} = require('sequelize');
- const {sequelize} = require('../config/db');
- const {priority_of_task, status_of_task,types_of_task} = require('../utils/constants');
- const {User} = require('./User');
- const {Project} = require('./Project');
+ import {DataTypes} from 'sequelize';
+ import {sequelize} from '../config/db.js';
+ import * as enums from '../utils/constants.js';
+ import {User} from './User.js';
+ import {Project} from './Project.js';
 
- const Task = sequelize.define('Task',{
+ export const Task = sequelize.define('Task',{
     task_id :{
         type: DataTypes.UUID,
         defaultValue : DataTypes.UUIDV4,
         primaryKey : true
     }, 
     task_type:{
-        type: DataTypes.ENUM(types_of_task.BUG, types_of_task.DOCUMENTATION, types_of_task.FEATURE, types_of_task.IMPROVEMENT, types_of_task.RESEARCH, types_of_task.OTHER),
+        type: DataTypes.ENUM(enums.types_of_task.BUG, enums.types_of_task.DOCUMENTATION, enums.types_of_task.FEATURE, enums.types_of_task.IMPROVEMENT, enums.types_of_task.RESEARCH, enums.types_of_task.OTHER),
         allowNull : false
     },
     task_title:{
@@ -31,13 +31,13 @@ const {DataTypes} = require('sequelize');
         }
     },
     task_priority:{
-        type: DataTypes.ENUM(priority_of_task.HIGH, priority_of_task.LOW, priority_of_task.MEDIUM, priority_of_task.NO_PRIORITY, priority_of_task.URGENT),
+        type: DataTypes.ENUM(enums.priority_of_task.HIGH, enums.priority_of_task.LOW, enums.priority_of_task.MEDIUM, enums.priority_of_task.NO_PRIORITY, enums.priority_of_task.URGENT),
         allowNull: false
     },
     task_status:{
-        type: DataTypes.ENUM(status_of_task.BACKLOG, status_of_task.CANCELLED,status_of_task.DONE, status_of_task.DUPLICATE, status_of_task.INPROGRESS, status_of_task.INREVIEW, status_of_task.TODO),
+        type: DataTypes.ENUM(enums.status_of_task.BACKLOG, enums.status_of_task.CANCELLED,enums.status_of_task.DONE, enums.status_of_task.DUPLICATE, enums.status_of_task.INPROGRESS, enums.status_of_task.INREVIEW, enums.status_of_task.TODO),
         allowNull: false,
-        defaultValue: status_of_task.TODO
+        defaultValue: enums.status_of_task.TODO
     },
     task_parent_project:{
         type: DataTypes.UUID,
@@ -65,5 +65,3 @@ const {DataTypes} = require('sequelize');
     paranoid: true,
     tableName: 'tasks'
 });
-
-module.exports = {Task};
