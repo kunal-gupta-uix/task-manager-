@@ -36,4 +36,4 @@ const types_of_task = {
     OTHER: 'other'
 };
 
-module.exports = {project_member_roles, project_status, priority_of_task, status_of_task,types_of_task};
+export {project_member_roles, project_status, priority_of_task, status_of_task,types_of_task};
