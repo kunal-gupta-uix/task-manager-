@@ -13,7 +13,7 @@ process.env.DB_PASSWORD,
 }
 );
 
-export const connectDB = async ()=> {
+export async function connectDB (){
     try{
         await sequelize.authenticate(); // sequelize tries to connect to the database and checks if the connection works
         console.log("Mysql connected successfully");

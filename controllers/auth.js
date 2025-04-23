@@ -1,6 +1,6 @@
 import * as authServices from '../services/auth.js'; 
 
-export async function controllerForLogin (req, res) {
+export async function login (req, res) {
   try{
     const email_id = req.body.email;
     const password = req.body.password;
@@ -14,7 +14,7 @@ export async function controllerForLogin (req, res) {
 
 }; 
 
-export async function controllerForSignup (req, res) {
+export async function signup (req, res) {
   try{
     const username = req.body.username;
     const email  = req.body.email;
