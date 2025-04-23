@@ -1,10 +1,10 @@
-const {login, signup} = require('../services/authServices');
+import * as authServices from '../services/auth.js'; 
 
-const loginController = async (req, res) => {
+export async function controllerForLogin (req, res) {
   try{
     const email_id = req.body.email;
     const password = req.body.password;
-    const {token, user} = await login({email_id, password});
+    const {token, user} = await authServices.login({email_id, password});
     return res.status(200).json({message: 'Login successful', token, user});
   }
   catch(err)
@@ -14,12 +14,12 @@ const loginController = async (req, res) => {
 
 }; 
 
-const signupController = async (req, res) => {
+export async function controllerForSignup (req, res) {
   try{
     const username = req.body.username;
     const email  = req.body.email;
     const password = req.body.password;
-    const user = await signup({username, email, password});
+    const user = await authServices.signup({username, email, password});
     return res.status(201).json({message: 'signup successful', user});
   }
   catch(err)
@@ -27,5 +27,3 @@ const signupController = async (req, res) => {
     return res.status(500).json({message: 'Error while signUp', error: err.message});
   }
 }
-
-module.exports = { loginController, signupController};

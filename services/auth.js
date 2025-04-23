@@ -1,9 +1,9 @@
-const {User} = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import {User} from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 // login service
-const login = async ({email_id, password}) => {
+export async function login ({email_id, password}) {
     try{
         // check for bad request
         if(!email_id || !password)
@@ -41,7 +41,7 @@ const login = async ({email_id, password}) => {
 
 
 //signup service
-const signup = async ({username, email, password}) => {
+export async function signup ({username, email, password}) {
     try{
         //check for bad request
         if(!username || !email || !password)
@@ -75,5 +75,3 @@ const signup = async ({username, email, password}) => {
         throw err;
     }
 };
-
-module.exports = {login, signup};
