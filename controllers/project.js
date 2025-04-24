@@ -1,12 +1,12 @@
 import * as services from '../services/project.js';
 
-export async function addNewProject (req, res) {
+export async function createProject (req, res) {
     try{
         const project_title = req.body.project_title;
         const project_description = req.body.project_description;
         const project_deadline = req.body.project_deadline;
         const sender_id = req.user.user_id;
-        const newProject = await services.addNewProject({project_title, project_description, project_deadline, sender_id});
+        const newProject = await services.createProject({project_title, project_description, project_deadline, sender_id});
         res.status(200).json({message:'Project successfully added', newProject});
     }
     catch(err)
@@ -16,12 +16,12 @@ export async function addNewProject (req, res) {
  
 };
 
-export async function addNewMemberToProject (req, res) {
+export async function addNewMember (req, res) {
     try{
         const project_id = req.body.project_id;
         const member_id = req.body.project_member_id;
         const role = 'member';
-        const newMember = await services.addNewMemberToProject({project_id, member_id, role});
+        const newMember = await services.addNewMember({project_id, member_id, role});
         res.status(200).json({message: 'Member successfully added to project', newMember});
     }
     catch(err)
@@ -30,7 +30,7 @@ export async function addNewMemberToProject (req, res) {
     }
 };
 
-export async function updateProjectDetails (req, res) {
+export async function updateProject (req, res) {
     try{
         const project_id = req.project.project_id;
         const sender_id = req.user.user_id;
@@ -38,7 +38,7 @@ export async function updateProjectDetails (req, res) {
         const new_title = req.body.project_title;
         const new_description = req.body.project_description;
         const new_deadline = req.body.project_deadline;
-        const updatedProject = await services.updateProjectDetails({project_id, sender_id, new_status,new_title, new_description, new_deadline});
+        const updatedProject = await services.updateProject({project_id, sender_id, new_status,new_title, new_description, new_deadline});
         res.status(200).json({message: 'Successfully updated project details', updatedProject});
     }
     catch(err)
@@ -59,10 +59,10 @@ export async function getAllProjectsOfUser (req, res) {
     }
 };
 
-export async function getAllMembersOfProject (req, res) {
+export async function getAllMembers (req, res) {
     try{
         const project_id = req.query.project_id;
-        const allProjectsMembers = await services.getAllMembersOfProject({project_id});
+        const allProjectsMembers = await services.getAllMembers({project_id});
         res.status(200).json({message:'Successfully fetched all members of this project', allProjectsMembers});
     }
     catch(err)

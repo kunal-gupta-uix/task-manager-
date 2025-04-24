@@ -1,7 +1,7 @@
 import jwt from'jsonwebtoken';
 import {ProjectMember,Project} from '../models/index.js';
 
-export async function projectAccess (req, res, next) {
+export async function projectAuth (req, res, next) {
     try{
     const project_id = req.method === 'GET' ? req.query.project_id : req.body.project_id;
     const sender_id = req.user.user_id;

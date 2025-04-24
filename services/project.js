@@ -4,7 +4,7 @@ import { sequelize } from '../config/db.js';
 
 
 // add new member to project
-export async function addNewMemberToProject ({project_id, member_id, role}, transaction = null) {
+export async function addNewMember ({project_id, member_id, role}, transaction = null) {
     try{
      
     //check if all necessary attributes have been passed or not
@@ -57,7 +57,7 @@ catch(error)
 };
 
 
-export async function addNewProject ({project_title, project_description, project_deadline, sender_id}) {
+export async function createProject ({project_title, project_description, project_deadline, sender_id}) {
     const t = await sequelize.transaction();
     try
     {
@@ -76,7 +76,7 @@ export async function addNewProject ({project_title, project_description, projec
     
         const project_id = newProject.project_id;
         const role = 'owner';
-        await addNewMemberToProject({project_id, member_id : sender_id, role}, t);
+        await addNewMember({project_id, member_id : sender_id, role}, t);
         await t.commit();
         return newProject;
   }
@@ -116,7 +116,7 @@ export async function getAllProjectsOfUser ({user_id}) {
 };
 
 
-export async function updateProjectDetails ({project_id, sender_id, new_status, new_title, new_description, new_deadline}) {
+export async function updateProject ({project_id, sender_id, new_status, new_title, new_description, new_deadline}) {
     try{
         if(!new_status || !project_id || !sender_id || !new_title ||!new_description || !new_deadline)
         {
@@ -157,7 +157,7 @@ export async function updateProjectDetails ({project_id, sender_id, new_status, 
 };
 
 //get all members of a project 
-export async function getAllMembersOfProject ({project_id}) {
+export async function getAllMembers ({project_id}) {
     try{
         const allProjectsMembers = await ProjectMember.findAll({
             where:{
