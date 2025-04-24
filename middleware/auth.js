@@ -1,6 +1,6 @@
-import {jwt} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import {User} from '../models/User.js';
-export async function protect (req,res,next) { 
+export async function auth (req,res,next) { 
     try{
     const authHeader = req.headers.authorization;
     if(! authHeader || !authHeader.startsWith('Bearer '))
