@@ -1,10 +1,9 @@
-const jwt = require('jsonwebtoken');
-const {ProjectMember} = require('../models/ProjectMember');
-const {Project} = require('../models/Project');
+import jwt from'jsonwebtoken';
+import {ProjectMember,Project} from '../models/index.js';
 
-const projectAccess = async (req, res, next) =>{
+export async function projectAccess (req, res, next) {
     try{
-    const project_id = req.body.project_id;
+    const project_id = req.method === 'GET' ? req.query.project_id : req.body.project_id;
     const sender_id = req.user.user_id;
     const projectMember =await ProjectMember.findOne({
         where:{
@@ -34,4 +33,3 @@ catch(err)
 
 };
 
-module.exports = {projectAccess};

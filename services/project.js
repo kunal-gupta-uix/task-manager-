@@ -1,12 +1,10 @@
-const {Project} = require('../models/Project');
-const {User} = require('../models/User');
-const {ProjectMember} = require('../models/ProjectMember');
-const {project_member_roles, project_status} = require('../utils/constants');
-const { sequelize } = require('../config/db');
+import {Project,ProjectMember} from '../models/index.js';
+import * as enums from '../utils/constants.js';
+import { sequelize } from '../config/db.js';
 
 
 // add new member to project
-const addMemberToProject = async ({project_id, member_id, role}, transaction = null) => {
+export async function addNewMemberToProject ({project_id, member_id, role}, transaction = null) {
     try{
      
     //check if all necessary attributes have been passed or not
@@ -15,7 +13,7 @@ const addMemberToProject = async ({project_id, member_id, role}, transaction = n
         throw new Error('All necessary fields must be filled');
     }
     
-    if(!Object.values(project_member_roles).includes(role))
+    if(!Object.values(enums.project_member_roles).includes(role))
     {
         throw new Error('Invalid role');
     }
@@ -59,7 +57,7 @@ catch(error)
 };
 
 
-const addNewProject = async ({project_title, project_description, project_deadline, sender_id}) => {
+export async function addNewProject ({project_title, project_description, project_deadline, sender_id}) {
     const t = await sequelize.transaction();
     try
     {
@@ -78,7 +76,7 @@ const addNewProject = async ({project_title, project_description, project_deadli
     
         const project_id = newProject.project_id;
         const role = 'owner';
-        await addMemberToProject({project_id, member_id : sender_id, role}, t);
+        await addNewMemberToProject({project_id, member_id : sender_id, role}, t);
         await t.commit();
         return newProject;
   }
@@ -91,7 +89,7 @@ const addNewProject = async ({project_title, project_description, project_deadli
 
 
 // get all projects of a user
-const getUserProjects = async ({user_id}) => {
+export async function getAllProjectsOfUser ({user_id}) {
     try{
         if(!user_id)
         {
@@ -118,14 +116,14 @@ const getUserProjects = async ({user_id}) => {
 };
 
 
-const updateProject = async ({project_id, sender_id, new_status, new_title, new_description, new_deadline}) => {
+export async function updateProjectDetails ({project_id, sender_id, new_status, new_title, new_description, new_deadline}) {
     try{
         if(!new_status || !project_id || !sender_id || !new_title ||!new_description || !new_deadline)
         {
             throw new Error('All necessary fields must be filled');
         }
         
-        if(!Object.values(project_status).includes(new_status))
+        if(!Object.values(enums.project_status).includes(new_status))
         {
             throw new Error('Invalid status');
         }
@@ -158,12 +156,12 @@ const updateProject = async ({project_id, sender_id, new_status, new_title, new_
 
 };
 
-//get members of a project 
-const getMembersOfProject = async ({req_project_id}) =>{
+//get all members of a project 
+export async function getAllMembersOfProject ({project_id}) {
     try{
         const allProjectsMembers = await ProjectMember.findAll({
             where:{
-                project_id: req_project_id
+                project_id: project_id
             }
         });
         return allProjectsMembers;
@@ -174,4 +172,3 @@ const getMembersOfProject = async ({req_project_id}) =>{
     }
 };
 
-module.exports = {addNewProject, updateProject, getUserProjects, addMemberToProject, getMembersOfProject};

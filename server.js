@@ -1,6 +1,7 @@
 import express from 'express';
 import {connectDB} from './config/db.js';
-import authRouter from './routes/authRoutes.js';
+import authRouter from './routes/auth.js';
+import projectRouter from './routes/project.js';
 import { sequelize } from './config/db.js';
 import * as associatedModels from './models/index.js';
 
