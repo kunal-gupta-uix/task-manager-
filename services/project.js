@@ -4,7 +4,7 @@ import { sequelize } from '../config/db.js';
 
 
 // add new member to project
-export async function addNewMember ({project_id, member_id, role}, transaction = null) {
+export async function addMember ({project_id, member_id, role}, transaction = null) {
     try{
      
     //check if all necessary attributes have been passed or not
@@ -76,7 +76,7 @@ export async function createProject ({project_title, project_description, projec
     
         const project_id = newProject.project_id;
         const role = 'owner';
-        await addNewMember({project_id, member_id : sender_id, role}, t);
+        await addMember({project_id, member_id : sender_id, role}, t);
         await t.commit();
         return newProject;
   }
