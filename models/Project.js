@@ -1,8 +1,8 @@
-const {DataTypes} = require('sequelize');
-const {sequelize} = require('../config/db');
-const {project_status} = require('../utils/constants');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
+import * as enums from '../utils/constants.js';
 
-const Project = sequelize.define('Project', {
+export const Project = sequelize.define('Project', {
     project_id:{
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -17,7 +17,7 @@ const Project = sequelize.define('Project', {
         allowNull: false
     },
     project_status:{
-        type: DataTypes.ENUM(project_status.ACTIVE, project_status.ARCHIVED, project_status.COMPLETED),
+        type: DataTypes.ENUM(enums.project_status.ACTIVE, enums.project_status.ARCHIVED, enums.project_status.COMPLETED),
         allowNull: false
     },
     project_deadline:{
@@ -32,6 +32,3 @@ const Project = sequelize.define('Project', {
     }
 
 );
-
-
-module.exports = {Project};
