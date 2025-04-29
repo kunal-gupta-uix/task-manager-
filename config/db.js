@@ -1,7 +1,8 @@
-const {Sequelize} = require('sequelize');
-require('dotenv').config(); // This adds all the variables inside .env to process.env
+import {Sequelize} from 'sequelize';
+import dotenv from 'dotenv'; 
+dotenv.config(); // Load environment variables
 
-const sequelize = new Sequelize(
+export const sequelize = new Sequelize(
 process.env.DB_NAME,
 process.env.DB_USER,
 process.env.DB_PASSWORD,
@@ -12,7 +13,7 @@ process.env.DB_PASSWORD,
 }
 );
 
-const connectDB = async ()=> {
+export async function connectDB (){
     try{
         await sequelize.authenticate(); // sequelize tries to connect to the database and checks if the connection works
         console.log("Mysql connected successfully");
@@ -22,5 +23,3 @@ const connectDB = async ()=> {
         console.error("Can't connect to database: ", error);
     }
 }
-
-module.exports = {sequelize, connectDB};

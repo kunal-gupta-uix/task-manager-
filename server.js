@@ -1,10 +1,14 @@
-const express = require('express');
-const {connectDB} = require('./config/db');
-const { sequelize } = require('./config/db');
-const {User, Project, ProjectMember,Task} = require('./models');
+import express from 'express';
+import {connectDB} from './config/db.js';
+import authRouter from './routes/auth.js';
+import projectRouter from './routes/project.js';
+import taskRouter from './routes/task.js';
+import verificationRouter from './routes/verification.js';
+import { sequelize } from './config/db.js';
+import * as associatedModels from './models/index.js';
 
 // Sync models with DB
-sequelize.sync({ force: true })  // or use { force: true } during development to drop and recreate
+sequelize.sync({ alter : true })  // or use { force: true } during development to drop and recreate
   .then(() => {
     console.log("All models synced with the database.");
   })
@@ -12,7 +16,8 @@ sequelize.sync({ force: true })  // or use { force: true } during development to
     console.error("Failed to sync models:", err);
   });
 
-require('dotenv').config(); // Load environment variables
+import dotenv from 'dotenv'; // Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +32,11 @@ connectDB();
 app.get('/', (req, res)=>{
     res.send('Welcome to the task manager API');
 });
+
+app.use('/auth', authRouter);
+app.use('/project',projectRouter);
+app.use('/task',taskRouter);
+app.use('/verify',verificationRouter);
 
 // start the server
 app.listen(PORT, ()=>{
