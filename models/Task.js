@@ -22,7 +22,7 @@
         type: DataTypes.TEXT,
         allowNull: false
     },
-    creater:{
+    creator:{
         type: DataTypes.UUID,
         allowNull: false,
         references :{
@@ -39,12 +39,12 @@
         allowNull: false,
         defaultValue: enums.status_of_task.TODO
     },
-    parent_project:{
+    project_id:{
         type: DataTypes.UUID,
         allowNull: false,
         references:{
             model : Project,
-            key: 'project_id'
+            key: 'id'
         }
     },
     deadline:{

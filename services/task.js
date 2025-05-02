@@ -4,10 +4,10 @@ import * as emailServices from './email.js';
 import {sequelize} from '../config/db.js';
 
 //add new task 
-export async function create ({type, title, description, sender_id, priority, parent_project, deadline,assignee}) {
+export async function create ({type, title, description, sender_id, priority, project_id, deadline,assignee}) {
     const t = await sequelize.transaction();
     try{
-        if(!type || !title || !description || !sender_id || !priority || !parent_project || !deadline || !assignee)
+        if(!type || !title || !description || !sender_id || !priority || !project_id || !deadline || !assignee)
         {
             throw new Error('All necessary fields must be filled');
         }
@@ -26,8 +26,8 @@ export async function create ({type, title, description, sender_id, priority, pa
         {
             const validAssignee = await ProjectMember.findOne({
                 where:{
-                    project_id: parent_project,
-                    project_member_id: assignee
+                    project_id: project_id,
+                    user_id: assignee
                 }
             });
             if(!validAssignee)
@@ -39,18 +39,18 @@ export async function create ({type, title, description, sender_id, priority, pa
             type,
             title,
             description,
-            creater : sender_id,
+            creator : sender_id,
             priority,
-            parent_project,
+            project_id,
             deadline,
             assignee,
             status: enums.status_of_task.TODO
         },{transaction: t});
 
         const emails = new Set();
-        const creater_email = (await User.findByPk(newTask.creater)).email;
+        const creator_email = (await User.findByPk(newTask.creator)).email;
         const new_assignee_email = (await User.findByPk(newTask.assignee)).email;
-        emails.add(creater_email);
+        emails.add(creator_email);
         emails.add(new_assignee_email);
         for (let email of emails)
         {
@@ -79,10 +79,10 @@ export async function create ({type, title, description, sender_id, priority, pa
 
 
 // update task details
-export async function update ({id,type, title, description, sender_id, priority, status, deadline, new_assignee}) {
+export async function update ({id,type, title, description, sender_id, priority, status, deadline, assignee}) {
     const t = await sequelize.transaction();
     try{
-        if(!id ||!type || !title || !description || !sender_id || !priority || !status || !deadline || !new_assignee)
+        if(!id ||!type || !title || !description || !sender_id || !priority || !status || !deadline || !assignee)
         {
             throw new Error('All necessary fields must be filled');
         }
@@ -93,11 +93,11 @@ export async function update ({id,type, title, description, sender_id, priority,
             throw new Error('Task does not exist in the records');
         }
         const current_assignee = req_task.assignee;
-        if(sender_id != req_task.creater && sender_id != req_task.assignee)
+        if(sender_id != req_task.creator && sender_id != req_task.assignee)
         {
             throw new Error('Unauthorised to update task');
         }
-        if(new_assignee != current_assignee)
+        if(assignee != current_assignee)
         {
             if(sender_id != current_assignee)
             {
@@ -105,8 +105,8 @@ export async function update ({id,type, title, description, sender_id, priority,
             }
             const isProjectMember = await ProjectMember.findOne({
                 where:{
-                    project_id: req_task.parent_project,
-                    project_member_id: new_assignee
+                    project_id: req_task.project_id,
+                    user_id: assignee
                 }
             });
             if(!isProjectMember)
@@ -135,16 +135,16 @@ export async function update ({id,type, title, description, sender_id, priority,
         req_task.priority = priority;
         req_task.status = status;
         req_task.deadline = deadline;
-        req_task.assignee = new_assignee;
+        req_task.assignee = assignee;
 
         await req_task.save({transaction: t});
         // using a set to score distinct emails 
         const emails = new Set();
-        const creater_email = (await User.findByPk(req_task.creater)).email;
+        const creator_email = (await User.findByPk(req_task.creator)).email;
         const new_assignee_email = (await User.findByPk(req_task.assignee)).email;
         const old_assignee_email = (await User.findByPk(current_assignee)).email;
 
-        emails.add(creater_email);
+        emails.add(creator_email);
         emails.add(new_assignee_email);
         emails.add(old_assignee_email);
 

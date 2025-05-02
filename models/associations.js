@@ -7,19 +7,19 @@ import {Otp} from './Otp.js';
 export function applyAssociations (){
     // project to other tables
     Project.hasMany(ProjectMember, {foreignKey: 'project_id'});
-    Project.hasMany(Task, {foreignKey: 'task_parent_project'});
+    Project.hasMany(Task, {foreignKey: 'project_id'});
 
     // projectMember to other tables
-    ProjectMember.belongsTo(User, {foreignKey: 'project_member_id'});
+    ProjectMember.belongsTo(User, {foreignKey: 'user_id'});
     ProjectMember.belongsTo(Project, {foreignKey: 'project_id'});
 
     //user to other tables
-    User.hasMany(ProjectMember, {foreignKey: 'project_member_id'});
-    User.hasMany(Task, {foreignKey:'task_assignee'});
-    
+    User.hasMany(Task, {foreignKey:'assignee'});
+    User.hasMany(ProjectMember, {foreignKey: 'user_id'});
+
     // task to other tables
-    Task.belongsTo(Project, {foreignKey: 'task_parent_project'});
-    Task.belongsTo(User, {foreignKey: 'task_assignee'});
+    Task.belongsTo(Project, {foreignKey: 'project_id'});
+    Task.belongsTo(User, {foreignKey: 'assignee'});
 
     //otp to other tables
     Otp.belongsTo(User,{foreignKey: 'user_id'});

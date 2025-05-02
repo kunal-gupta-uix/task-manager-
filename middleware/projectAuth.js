@@ -2,12 +2,12 @@ import {ProjectMember,Project} from '../models/index.js';
 
 export async function projectAuth (req, res, next) {
     try{
-    const project_id = req.method === 'GET' ? req.query.project_id : req.body.project_id;
+    const id = req.method === 'GET' ? req.query.project_id : req.body.project_id;
     const sender_id = req.user.user_id;
     const projectMember =await ProjectMember.findOne({
         where:{
-            project_id,
-            project_member_id : sender_id
+            project_id: id,
+            user_id : sender_id
         }
     });
     
@@ -16,7 +16,7 @@ export async function projectAuth (req, res, next) {
         return res.status(403).json({message: 'Access denied'});
     }
     
-    const project =await Project.findByPk(project_id);
+    const project =await Project.findByPk(id);
     if(!project)
     {
        return res.status(404).json({message: 'Project not found'});
