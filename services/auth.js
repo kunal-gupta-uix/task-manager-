@@ -3,17 +3,17 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 // login service
-export async function login ({email_id, password}) {
+export async function login ({email, password}) {
     try{
         // check for bad request
-        if(!email_id || !password)
+        if(!email || !password)
         {
             throw new Error('All necessary fields must be filled');
         }
         //check if the email is present in database or not
         const existing = await User.findOne({
             where:{
-                email : email_id
+                email : email
             }
         });
     

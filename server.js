@@ -2,11 +2,13 @@ import express from 'express';
 import {connectDB} from './config/db.js';
 import authRouter from './routes/auth.js';
 import projectRouter from './routes/project.js';
+import taskRouter from './routes/task.js';
+import verificationRouter from './routes/verification.js';
 import { sequelize } from './config/db.js';
 import * as associatedModels from './models/index.js';
 
 // Sync models with DB
-sequelize.sync({ force: true })  // or use { force: true } during development to drop and recreate
+sequelize.sync({ alter : true })  // or use { force: true } during development to drop and recreate
   .then(() => {
     console.log("All models synced with the database.");
   })
@@ -33,6 +35,8 @@ app.get('/', (req, res)=>{
 
 app.use('/auth', authRouter);
 app.use('/project',projectRouter);
+app.use('/task',taskRouter);
+app.use('/verify',verificationRouter);
 
 // start the server
 app.listen(PORT, ()=>{
