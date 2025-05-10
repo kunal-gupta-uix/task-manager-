@@ -16,12 +16,12 @@ export async function createProject (req, res) {
  
 };
 
-export async function addNewMember (req, res) {
+export async function addMember (req, res) {
     try{
         const project_id = req.body.project_id;
         const member_id = req.body.project_member_id;
         const role = 'member';
-        const newMember = await services.addNewMember({project_id, member_id, role});
+        const newMember = await services.addMember({project_id, member_id, role});
         res.status(200).json({message: 'Member successfully added to project', newMember});
     }
     catch(err)
