@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import {User} from '../models/User.js';
+import {User} from '../models/index.js';
 export async function auth (req,res,next) { 
     try{
     const authHeader = req.headers.authorization;
@@ -23,5 +23,4 @@ export async function auth (req,res,next) {
     console.error('Auth middleware error:', err);
     res.status(401).json({ message: 'Error while verifying token', error : err.message});
    }
-
 };
